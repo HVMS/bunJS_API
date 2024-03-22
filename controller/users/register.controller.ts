@@ -15,7 +15,7 @@ registerRouter.post('/', async (req, res) => {
     const { user_email, password } = currentUser;
 
     if (!user_email || !password) {
-        res.status(400).send('User email and password are required');
+        res.status(400).json({message: 'User email and password are required'});
         return;
     }
 
