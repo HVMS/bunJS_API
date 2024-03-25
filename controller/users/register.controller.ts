@@ -1,7 +1,5 @@
 import server from "bunrest";
-// Import User from the correct file path
-import { User } from "../../model/user.model";
-
+import user from "../../model/user.model";
 import UserService from "../../service/user.service";
 
 export const registerRouter = server().router();
@@ -11,7 +9,7 @@ const userService = new UserService();
 registerRouter.post('/', async (req, res) => {
     console.log(req.body);
 
-    const currentUser = req.body as User;
+    const currentUser = req.body as user;
     const { user_email, password } = currentUser;
 
     if (!user_email || !password) {

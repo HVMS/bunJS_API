@@ -1,4 +1,6 @@
-export interface User {
-    user_email?: String;
-    password?: String;
+interface user {
+    user_email: string;
+    password: string;
 }
+
+export default user;

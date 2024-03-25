@@ -1,31 +1,51 @@
-// import connect function from dbconnect.ts
-import { connectToMongoDB, db } from '../database/dbconnect';
-import { User } from '../model/user.model';
-import { Db, MongoClient } from 'mongodb';
-import config from '../database/config';
+import { Db } from 'mongodb';
+import user from '../model/user.model';
+import { connectToDB } from '../database/dbconnect';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
-const DB_NAME = config.DATABASE;
-const USER_COLLECTION = config.USER_COLLECTION;
+const usersCollectionName = process.env.usersCollectionName || 'users';
+const dbName = process.env.dbName;
 
 class UserService {
 
-    async getUserByEmail (user_email: String){
-        try{
-            const database = await connectToMongoDB(DB_NAME);
+    async getUserByEmail(user: user) {
+        try {
+            const client = await connectToDB();
+            const db: Db = client.db(dbName);
+
+            const userDetails = await db.collection(usersCollectionName).findOne(user_email);
+            console.log(userDetails);
             
-            const returned_user = await database.collection(USER_COLLECTION)
-            
-        } catch (error){
+            await client.close();
+            if (userDetails) {
+                return userDetails;
+            }
+
+        } catch (error) {
             console.error('Error connecting to the database', error);
         }
     }
 
-    async createUser (user: User){
-        if (!user.user_email) {
-            return null;
+    async createUser(user: user) {
+        if ((await this.getUserByEmail({user_email: user.user_email})) != null) {
+            return;
         }
-        if (( await this.getUserByEmail(user.user_email)) !== null){
-            return null; 
+
+        try {
+            // Connect to MongoDB
+            const client = await connectToDB();
+            const db: Db = client.db(dbName);
+
+            // Check user credentials in the MongoDB collection
+            console.log(user);
+
+            const new_user = await db.collection(usersCollectionName).insertOne(user);
+
+            await client.close();
+            return new_user;
+        } catch (error) {
+            console.log(error);
         }
     }
 }

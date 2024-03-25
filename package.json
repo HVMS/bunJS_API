@@ -8,7 +8,8 @@
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "@types/figlet": "^1.5.8"
+    "@types/figlet": "^1.5.8",
+    "bun-plugin-env": "^0.4.1"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
